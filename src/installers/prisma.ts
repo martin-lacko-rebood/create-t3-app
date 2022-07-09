@@ -43,9 +43,12 @@ export const prismaInstaller: Installer = async ({
 
   // add postinstall script to package.json
   const packageJsonPath = path.join(projectDir, "package.json");
-
   const packageJsonContent = fs.readJSONSync(packageJsonPath) as PackageJson;
-  packageJsonContent.scripts!.postinstall = "prisma generate"; //eslint-disable-line @typescript-eslint/no-non-null-assertion
+
+  const scripts = packageJsonContent.scripts ?? {};
+  scripts.postinstall = "prisma generate";
+  scripts.studio = "prisma studio";
+  packageJsonContent.scripts = scripts;
 
   await Promise.all([
     fs.copy(schemaSrc, schemaDest),
